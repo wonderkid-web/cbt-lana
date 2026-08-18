@@ -1,0 +1,171 @@
+/* =========================================================
+   SIDEBAR — grouping menu + mode mini (icon-only)
+   Di-load paling akhir di <head> supaya menimpa CSS inline
+   masing-masing halaman.
+   ========================================================= */
+
+:root {
+    --sidebar-w-mini: 84px;
+}
+
+/* ---------------------------------------------------------
+   1. GROUPING MENU (berlaku di semua ukuran layar)
+   --------------------------------------------------------- */
+#sidebar .nav-group-toggle { cursor: pointer; }
+
+#sidebar .nav-group-toggle .chev {
+    margin-left: auto;
+    margin-right: 0;
+    font-size: .75rem;
+    opacity: .6;
+    transition: transform .25s ease;
+}
+#sidebar .nav-group.open > .nav-group-toggle .chev { transform: rotate(180deg); }
+
+/* Judul grup yang sedang berisi halaman aktif */
+#sidebar .nav-group-toggle.has-active { color: #fff; }
+
+/* Daftar anak menu: tertutup rapat, dibuka pakai max-height */
+#sidebar .nav-group-menu {
+    list-style: none;
+    margin: 4px 0 0 30px;
+    padding-left: 0;
+    border-left: 1px solid rgba(255, 255, 255, .12);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .3s ease;
+}
+#sidebar .nav-group.open > .nav-group-menu { max-height: 480px; }
+
+#sidebar .nav-group-menu .nav-link {
+    padding: 10px 14px;
+    font-size: .92rem;
+}
+#sidebar .nav-group-menu .nav-link i {
+    font-size: 1.05rem;
+    margin-right: 12px;
+}
+
+/* ---------------------------------------------------------
+   2. MODE MINI (icon-only) — desktop saja.
+      Di mobile (<=768px) sidebar tetap off-canvas seperti semula.
+   --------------------------------------------------------- */
+@media (min-width: 769px) {
+
+    #sidebar {
+        transition: width .28s ease, min-width .28s ease,
+                    max-width .28s ease, margin-left .28s ease;
+    }
+
+    /* Sidebar menyusut, bukan tersembunyi */
+    html.sidebar-mini #sidebar,
+    #sidebar.collapsed {
+        margin-left: 0 !important;
+        width: var(--sidebar-w-mini) !important;
+        min-width: var(--sidebar-w-mini) !important;
+        max-width: var(--sidebar-w-mini) !important;
+    }
+
+    /* Header: judul panjang diganti inisial */
+    html.sidebar-mini .sidebar-header,
+    #sidebar.collapsed .sidebar-header { padding: 20px 6px !important; }
+
+    html.sidebar-mini .sidebar-header h5,
+    #sidebar.collapsed .sidebar-header h5 {
+        font-size: 0 !important;
+        line-height: 0 !important;
+    }
+    html.sidebar-mini .sidebar-header h5::after,
+    #sidebar.collapsed .sidebar-header h5::after {
+        content: "SPA";
+        display: block;
+        font-size: 1rem;
+        line-height: 1.4;
+        letter-spacing: 1px;
+    }
+    html.sidebar-mini .sidebar-header small,
+    #sidebar.collapsed .sidebar-header small { display: none !important; }
+
+    /* Menu: sisakan ikon saja */
+    html.sidebar-mini #sidebar .nav-link,
+    #sidebar.collapsed .nav-link {
+        font-size: 0 !important;
+        justify-content: center !important;
+        padding: 13px 0 !important;
+        margin: 0 12px !important;
+        border-radius: 12px !important;
+    }
+    html.sidebar-mini #sidebar .nav-link i,
+    #sidebar.collapsed .nav-link i {
+        font-size: 1.3rem !important;
+        margin-right: 0 !important;
+    }
+    html.sidebar-mini #sidebar hr,
+    #sidebar.collapsed hr {
+        margin-left: 14px !important;
+        margin-right: 14px !important;
+    }
+
+    /* Saat mini: yang tampil hanya IKON GRUP.
+       Anak menu muncul sebagai flyout di sebelah kanan ketika di-hover,
+       jadi menu tidak menumpuk dan sidebar tidak perlu di-scroll. */
+    html.sidebar-mini #sidebar,
+    #sidebar.collapsed { overflow: visible !important; }
+
+    html.sidebar-mini #sidebar .nav-group,
+    #sidebar.collapsed .nav-group { position: relative; }
+
+    html.sidebar-mini #sidebar .nav-group-toggle .chev,
+    #sidebar.collapsed .nav-group-toggle .chev { display: none !important; }
+
+    /* Ikon grup ikut ditandai kalau halaman aktif ada di dalamnya,
+       karena anak menunya tidak terlihat saat mini */
+    html.sidebar-mini #sidebar .nav-group-toggle.has-active,
+    #sidebar.collapsed .nav-group-toggle.has-active {
+        background: var(--accent, #3b82f6) !important;
+        color: #fff !important;
+    }
+
+    /* Flyout */
+    html.sidebar-mini #sidebar .nav-group-menu,
+    #sidebar.collapsed .nav-group-menu {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        z-index: 1060;
+        display: none;
+        min-width: 215px;
+        margin: 0 !important;
+        padding: 8px !important;
+        max-height: none !important;
+        overflow: visible !important;
+        background: var(--sidebar-bg, #0f172a);
+        border-left: 0 !important;
+        border-radius: 0 14px 14px 0;
+        box-shadow: 6px 6px 24px rgba(0, 0, 0, .35);
+    }
+    html.sidebar-mini #sidebar .nav-group:hover > .nav-group-menu,
+    #sidebar.collapsed .nav-group:hover > .nav-group-menu { display: block; }
+
+    /* Isi flyout tampil normal (ada teksnya lagi) */
+    html.sidebar-mini #sidebar .nav-group-menu .nav-link,
+    #sidebar.collapsed .nav-group-menu .nav-link {
+        font-size: .92rem !important;
+        justify-content: flex-start !important;
+        padding: 10px 14px !important;
+        margin: 0 !important;
+        white-space: nowrap;
+    }
+    html.sidebar-mini #sidebar .nav-group-menu .nav-link i,
+    #sidebar.collapsed .nav-group-menu .nav-link i {
+        font-size: 1.05rem !important;
+        margin-right: 12px !important;
+    }
+
+    /* Konten menyesuaikan lebar sidebar mini */
+    html.sidebar-mini .content-area,
+    .content-area.expanded {
+        margin-left: var(--sidebar-w-mini) !important;
+        width: calc(100% - var(--sidebar-w-mini)) !important;
+    }
+}

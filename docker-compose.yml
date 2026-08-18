@@ -1,0 +1,60 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: cbt-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: db_cbt_binjai
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+    volumes:
+      - db_data:/var/lib/mysql
+      # Dump di-import OTOMATIS hanya saat volume database masih kosong
+      - ./database/db_cbt_binjai.sql:/docker-entrypoint-initdb.d/01-db_cbt_binjai.sql:ro
+    ports:
+      # Akses dari luar (mis. HeidiSQL/DBeaver) di port 3307
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  web:
+    build: .
+    container_name: cbt-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: db_cbt_binjai
+    ports:
+      - "8080:80"
+    volumes:
+      # Live-edit: perubahan file langsung terlihat tanpa rebuild
+      - ./:/var/www/html
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: cbt-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 128M
+    ports:
+      - "8081:80"
+
+volumes:
+  db_data:
