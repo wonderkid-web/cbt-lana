@@ -18,6 +18,32 @@ Tunggu ±30 detik saat pertama kali (database di-import otomatis dari
 | phpMyAdmin  | http://localhost:8081  (user `root` / `root`) |
 | MySQL/MariaDB | `localhost:3307` (user `root` / `root`)     |
 
+## Mengubah port
+
+Kalau port bentrok dengan aplikasi lain (`port is already allocated`),
+ubah nilainya di file `.env` — **tidak perlu menyentuh docker-compose.yml**:
+
+```
+WEB_PORT=8080   # alamat aplikasi CBT
+PMA_PORT=8081   # phpMyAdmin
+DB_PORT=3307    # MySQL dari HeidiSQL/DBeaver
+```
+
+Lalu jalankan lagi:
+
+```bash
+docker compose up -d
+```
+
+Container yang portnya berubah akan dibuat ulang otomatis dan port lama dilepas.
+Pastikan ketiga port tersebut **berbeda satu sama lain**.
+
+Melihat port yang sedang dipakai:
+
+```bash
+docker compose ps
+```
+
 ## Perintah lain
 
 ```bash

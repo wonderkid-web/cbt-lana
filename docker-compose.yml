@@ -36,7 +36,7 @@ services:
       DB_PASS: root
       DB_NAME: db_cbt_binjai
     ports:
-      - "8080:80"
+      - "8082:80"
     volumes:
       # Live-edit: perubahan file langsung terlihat tanpa rebuild
       - ./:/var/www/html
